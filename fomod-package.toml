@@ -1,0 +1,567 @@
+# FOMOD package spec for Devious Devices NG (schema: aviallon-mods/modforge
+# tools/package_fomod.py docstring). One [[files]] entry per zip entry: the zip
+# contains exactly this list + meta.ini at its root, nothing else.
+#
+# `stage/` is produced by tools/fomod-stage.sh from a "Build and Release" run's
+# artifacts (actions/download-artifact places them at artifacts/<name>/) plus
+# this repo's tracked mod files. The staging script refuses to run when the
+# staged tree carries a file this spec does not claim, so a file added to dist/
+# or to the build outputs turns the packaging run red instead of silently
+# missing from the zip.
+
+name = "DeviousDevicesNG"
+zip_name = "DeviousDevicesNG-{version}-fomod.zip"
+# Single source of truth for the version: the project() line in CMakeLists.txt
+# (same value the "Build and Release" archive name uses).
+version = { cmake = "CMakeLists.txt" }
+game_name = "skyrimspecialedition"
+author = "IHateMyKite"
+description = "NG implementation of DD's plugin."
+nexus_name = "Devious Devices NG"
+nexus_url = "https://github.com/aviallon-mods/DeviousDevicesNG"
+file_category = "MAIN"
+# Evidence: the shipped scripts import PapyrusUtil (zadLibs) and SexLab scripts
+# (sslBaseExpression/sslUtility in zadexpressionlibs/zadBQ00) and extend SkyUI
+# scripts (zadConfig extends SKI_ConfigBase, zadWidgets extends SKI_WidgetBase);
+# the DLL is an SKSE plugin resolved through Address Library.
+requirements = [
+  "30379:SKSE64",
+  "32444:Address Library for SKSE Plugins",
+  "12604:SkyUI",
+  "0:PapyrusUtil SE",
+  "0:SexLab Framework",
+]
+fomod = true
+
+
+[[files]]
+src = "fomod/ModuleConfig.xml"
+dest = "fomod/ModuleConfig.xml"
+
+[[files]]
+src = "stage/Devious Devices - Assets.esm"
+dest = "Devious Devices - Assets.esm"
+
+[[files]]
+src = "stage/Devious Devices - Contraptions.esm"
+dest = "Devious Devices - Contraptions.esm"
+
+[[files]]
+src = "stage/Devious Devices - Expansion.esm"
+dest = "Devious Devices - Expansion.esm"
+
+[[files]]
+src = "stage/Devious Devices - Integration.esm"
+dest = "Devious Devices - Integration.esm"
+
+[[files]]
+src = "stage/Devious Devices SE patch.esp"
+dest = "Devious Devices SE patch.esp"
+
+[[files]]
+src = "stage/Devious Devices_KID.ini"
+dest = "Devious Devices_KID.ini"
+
+[[files]]
+src = "stage/SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/Boxbinder.json"
+dest = "SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/Boxbinder.json"
+
+[[files]]
+src = "stage/SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/Config/arm_nodes.json"
+dest = "SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/Config/arm_nodes.json"
+
+[[files]]
+src = "stage/SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/Config/head_nodes.json"
+dest = "SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/Config/head_nodes.json"
+
+[[files]]
+src = "stage/SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/Elbowbinder.json"
+dest = "SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/Elbowbinder.json"
+
+[[files]]
+src = "stage/SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/armbinder.json"
+dest = "SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/armbinder.json"
+
+[[files]]
+src = "stage/SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/breast-yoke.json"
+dest = "SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/breast-yoke.json"
+
+[[files]]
+src = "stage/SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/butterfly.json"
+dest = "SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/butterfly.json"
+
+[[files]]
+src = "stage/SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/elbow-shackles.json"
+dest = "SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/elbow-shackles.json"
+
+[[files]]
+src = "stage/SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/front-cuffs.json"
+dest = "SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/front-cuffs.json"
+
+[[files]]
+src = "stage/SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/frontyoke.json"
+dest = "SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/frontyoke.json"
+
+[[files]]
+src = "stage/SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/posture-collar.json"
+dest = "SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/posture-collar.json"
+
+[[files]]
+src = "stage/SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/restrictive-collar.json"
+dest = "SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/restrictive-collar.json"
+
+[[files]]
+src = "stage/SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/yoke.json"
+dest = "SKSE/PartialAnimationReplacer/Replacers/DeviousDevices/yoke.json"
+
+[[files]]
+src = "stage/SKSE/Plugins/DeviousDevices.dll"
+dest = "SKSE/Plugins/DeviousDevices.dll"
+
+[[files]]
+src = "stage/SKSE/Plugins/DeviousDevices.ini"
+dest = "SKSE/Plugins/DeviousDevices.ini"
+
+[[files]]
+src = "stage/SKSE/Plugins/DeviousDevices.pdb"
+dest = "SKSE/Plugins/DeviousDevices.pdb"
+
+[[files]]
+src = "stage/Seq/Devious Devices - Assets.seq"
+dest = "Seq/Devious Devices - Assets.seq"
+
+[[files]]
+src = "stage/Seq/Devious Devices - Contraptions.seq"
+dest = "Seq/Devious Devices - Contraptions.seq"
+
+[[files]]
+src = "stage/Seq/Devious Devices - Expansion.seq"
+dest = "Seq/Devious Devices - Expansion.seq"
+
+[[files]]
+src = "stage/Seq/Devious Devices - Integration.seq"
+dest = "Seq/Devious Devices - Integration.seq"
+
+[[files]]
+src = "stage/scripts/BUILD_ALL.bat"
+dest = "scripts/BUILD_ALL.bat"
+
+[[files]]
+src = "stage/scripts/BUILD_ONE_EX.bat"
+dest = "scripts/BUILD_ONE_EX.bat"
+
+[[files]]
+src = "stage/scripts/QF_zadcNGEscapeMinigameQuest.pex"
+dest = "scripts/QF_zadcNGEscapeMinigameQuest.pex"
+
+[[files]]
+src = "stage/scripts/source/QF_zadcNGEscapeMinigameQuest.psc"
+dest = "scripts/source/QF_zadcNGEscapeMinigameQuest.psc"
+
+[[files]]
+src = "stage/scripts/source/zadActivateVibratorSpell.psc"
+dest = "scripts/source/zadActivateVibratorSpell.psc"
+
+[[files]]
+src = "stage/scripts/source/zadArmbinderEffect.psc"
+dest = "scripts/source/zadArmbinderEffect.psc"
+
+[[files]]
+src = "stage/scripts/source/zadArmbinderQuestScript.psc"
+dest = "scripts/source/zadArmbinderQuestScript.psc"
+
+[[files]]
+src = "stage/scripts/source/zadBQ00.psc"
+dest = "scripts/source/zadBQ00.psc"
+
+[[files]]
+src = "stage/scripts/source/zadBeltedAnims.psc"
+dest = "scripts/source/zadBeltedAnims.psc"
+
+[[files]]
+src = "stage/scripts/source/zadBlindfoldEffect.psc"
+dest = "scripts/source/zadBlindfoldEffect.psc"
+
+[[files]]
+src = "stage/scripts/source/zadBoundCombatScript.psc"
+dest = "scripts/source/zadBoundCombatScript.psc"
+
+[[files]]
+src = "stage/scripts/source/zadConfig.psc"
+dest = "scripts/source/zadConfig.psc"
+
+[[files]]
+src = "stage/scripts/source/zadDeviceLists.psc"
+dest = "scripts/source/zadDeviceLists.psc"
+
+[[files]]
+src = "stage/scripts/source/zadDevicesUnderneathPlayerScript.psc"
+dest = "scripts/source/zadDevicesUnderneathPlayerScript.psc"
+
+[[files]]
+src = "stage/scripts/source/zadDevicesUnderneathScript.psc"
+dest = "scripts/source/zadDevicesUnderneathScript.psc"
+
+[[files]]
+src = "stage/scripts/source/zadEquipScript.psc"
+dest = "scripts/source/zadEquipScript.psc"
+
+[[files]]
+src = "stage/scripts/source/zadEventArmorRestraints.psc"
+dest = "scripts/source/zadEventArmorRestraints.psc"
+
+[[files]]
+src = "stage/scripts/source/zadEventBlindfold.psc"
+dest = "scripts/source/zadEventBlindfold.psc"
+
+[[files]]
+src = "stage/scripts/source/zadEventBoots.psc"
+dest = "scripts/source/zadEventBoots.psc"
+
+[[files]]
+src = "stage/scripts/source/zadEventCatsuit.psc"
+dest = "scripts/source/zadEventCatsuit.psc"
+
+[[files]]
+src = "stage/scripts/source/zadEventHorny.psc"
+dest = "scripts/source/zadEventHorny.psc"
+
+[[files]]
+src = "stage/scripts/source/zadEventPeriodicShocker.psc"
+dest = "scripts/source/zadEventPeriodicShocker.psc"
+
+[[files]]
+src = "stage/scripts/source/zadEventPostureCollar.psc"
+dest = "scripts/source/zadEventPostureCollar.psc"
+
+[[files]]
+src = "stage/scripts/source/zadEventStruggle.psc"
+dest = "scripts/source/zadEventStruggle.psc"
+
+[[files]]
+src = "stage/scripts/source/zadEventWetPadding.psc"
+dest = "scripts/source/zadEventWetPadding.psc"
+
+[[files]]
+src = "stage/scripts/source/zadGagEffect.psc"
+dest = "scripts/source/zadGagEffect.psc"
+
+[[files]]
+src = "stage/scripts/source/zadGagNoFoodEffect.psc"
+dest = "scripts/source/zadGagNoFoodEffect.psc"
+
+[[files]]
+src = "stage/scripts/source/zadHiderScript.psc"
+dest = "scripts/source/zadHiderScript.psc"
+
+[[files]]
+src = "stage/scripts/source/zadInterfaceVRIK.psc"
+dest = "scripts/source/zadInterfaceVRIK.psc"
+
+[[files]]
+src = "stage/scripts/source/zadLibs.psc"
+dest = "scripts/source/zadLibs.psc"
+
+[[files]]
+src = "stage/scripts/source/zadLibsNG.psc"
+dest = "scripts/source/zadLibsNG.psc"
+
+[[files]]
+src = "stage/scripts/source/zadMufflingEffect.psc"
+dest = "scripts/source/zadMufflingEffect.psc"
+
+[[files]]
+src = "stage/scripts/source/zadMufflingStateScript.psc"
+dest = "scripts/source/zadMufflingStateScript.psc"
+
+[[files]]
+src = "stage/scripts/source/zadNPCGagUpdater.psc"
+dest = "scripts/source/zadNPCGagUpdater.psc"
+
+[[files]]
+src = "stage/scripts/source/zadNPCQuestScript.psc"
+dest = "scripts/source/zadNPCQuestScript.psc"
+
+[[files]]
+src = "stage/scripts/source/zadNativeFunctions.psc"
+dest = "scripts/source/zadNativeFunctions.psc"
+
+[[files]]
+src = "stage/scripts/source/zadPlayerScript.psc"
+dest = "scripts/source/zadPlayerScript.psc"
+
+[[files]]
+src = "stage/scripts/source/zadPlugScript.psc"
+dest = "scripts/source/zadPlugScript.psc"
+
+[[files]]
+src = "stage/scripts/source/zadSLBoundAnims.psc"
+dest = "scripts/source/zadSLBoundAnims.psc"
+
+[[files]]
+src = "stage/scripts/source/zadTrainingEffect.psc"
+dest = "scripts/source/zadTrainingEffect.psc"
+
+[[files]]
+src = "stage/scripts/source/zadWidgets.psc"
+dest = "scripts/source/zadWidgets.psc"
+
+[[files]]
+src = "stage/scripts/source/zadYokeQuestScript.psc"
+dest = "scripts/source/zadYokeQuestScript.psc"
+
+[[files]]
+src = "stage/scripts/source/zad_EffInflatablePlugsAnalScript.psc"
+dest = "scripts/source/zad_EffInflatablePlugsAnalScript.psc"
+
+[[files]]
+src = "stage/scripts/source/zad_EffInflateableVaginalPlugScript.psc"
+dest = "scripts/source/zad_EffInflateableVaginalPlugScript.psc"
+
+[[files]]
+src = "stage/scripts/source/zadcAnims.psc"
+dest = "scripts/source/zadcAnims.psc"
+
+[[files]]
+src = "stage/scripts/source/zadcFurnitureScript.psc"
+dest = "scripts/source/zadcFurnitureScript.psc"
+
+[[files]]
+src = "stage/scripts/source/zadcNGEscapeMinigame.psc"
+dest = "scripts/source/zadcNGEscapeMinigame.psc"
+
+[[files]]
+src = "stage/scripts/source/zadclibs.psc"
+dest = "scripts/source/zadclibs.psc"
+
+[[files]]
+src = "stage/scripts/source/zadexpressionlibs.psc"
+dest = "scripts/source/zadexpressionlibs.psc"
+
+[[files]]
+src = "stage/scripts/source/zadxUpdater.psc"
+dest = "scripts/source/zadxUpdater.psc"
+
+[[files]]
+src = "stage/scripts/source/zadx_BondageMittensEffectScript.psc"
+dest = "scripts/source/zadx_BondageMittensEffectScript.psc"
+
+[[files]]
+src = "stage/scripts/source/zadx_BondageMittensScript.psc"
+dest = "scripts/source/zadx_BondageMittensScript.psc"
+
+[[files]]
+src = "stage/scripts/source/zadx_ForcedWalkScript.psc"
+dest = "scripts/source/zadx_ForcedWalkScript.psc"
+
+[[files]]
+src = "stage/scripts/source/zadx_GagInflatableScript.psc"
+dest = "scripts/source/zadx_GagInflatableScript.psc"
+
+[[files]]
+src = "stage/scripts/source/zadx_HobbleSkirtEffectScript.psc"
+dest = "scripts/source/zadx_HobbleSkirtEffectScript.psc"
+
+[[files]]
+src = "stage/scripts/zadActivateVibratorSpell.pex"
+dest = "scripts/zadActivateVibratorSpell.pex"
+
+[[files]]
+src = "stage/scripts/zadArmbinderEffect.pex"
+dest = "scripts/zadArmbinderEffect.pex"
+
+[[files]]
+src = "stage/scripts/zadArmbinderQuestScript.pex"
+dest = "scripts/zadArmbinderQuestScript.pex"
+
+[[files]]
+src = "stage/scripts/zadBQ00.pex"
+dest = "scripts/zadBQ00.pex"
+
+[[files]]
+src = "stage/scripts/zadBeltedAnims.pex"
+dest = "scripts/zadBeltedAnims.pex"
+
+[[files]]
+src = "stage/scripts/zadBlindfoldEffect.pex"
+dest = "scripts/zadBlindfoldEffect.pex"
+
+[[files]]
+src = "stage/scripts/zadBoundCombatScript.pex"
+dest = "scripts/zadBoundCombatScript.pex"
+
+[[files]]
+src = "stage/scripts/zadConfig.pex"
+dest = "scripts/zadConfig.pex"
+
+[[files]]
+src = "stage/scripts/zadDeviceLists.pex"
+dest = "scripts/zadDeviceLists.pex"
+
+[[files]]
+src = "stage/scripts/zadDevicesUnderneathPlayerScript.pex"
+dest = "scripts/zadDevicesUnderneathPlayerScript.pex"
+
+[[files]]
+src = "stage/scripts/zadDevicesUnderneathScript.pex"
+dest = "scripts/zadDevicesUnderneathScript.pex"
+
+[[files]]
+src = "stage/scripts/zadEquipScript.pex"
+dest = "scripts/zadEquipScript.pex"
+
+[[files]]
+src = "stage/scripts/zadEventArmorRestraints.pex"
+dest = "scripts/zadEventArmorRestraints.pex"
+
+[[files]]
+src = "stage/scripts/zadEventBlindfold.pex"
+dest = "scripts/zadEventBlindfold.pex"
+
+[[files]]
+src = "stage/scripts/zadEventBoots.pex"
+dest = "scripts/zadEventBoots.pex"
+
+[[files]]
+src = "stage/scripts/zadEventCatsuit.pex"
+dest = "scripts/zadEventCatsuit.pex"
+
+[[files]]
+src = "stage/scripts/zadEventHorny.pex"
+dest = "scripts/zadEventHorny.pex"
+
+[[files]]
+src = "stage/scripts/zadEventPeriodicShocker.pex"
+dest = "scripts/zadEventPeriodicShocker.pex"
+
+[[files]]
+src = "stage/scripts/zadEventPostureCollar.pex"
+dest = "scripts/zadEventPostureCollar.pex"
+
+[[files]]
+src = "stage/scripts/zadEventStruggle.pex"
+dest = "scripts/zadEventStruggle.pex"
+
+[[files]]
+src = "stage/scripts/zadEventWetPadding.pex"
+dest = "scripts/zadEventWetPadding.pex"
+
+[[files]]
+src = "stage/scripts/zadGagEffect.pex"
+dest = "scripts/zadGagEffect.pex"
+
+[[files]]
+src = "stage/scripts/zadGagNoFoodEffect.pex"
+dest = "scripts/zadGagNoFoodEffect.pex"
+
+[[files]]
+src = "stage/scripts/zadHiderScript.pex"
+dest = "scripts/zadHiderScript.pex"
+
+[[files]]
+src = "stage/scripts/zadInterfaceVRIK.pex"
+dest = "scripts/zadInterfaceVRIK.pex"
+
+[[files]]
+src = "stage/scripts/zadLibs.pex"
+dest = "scripts/zadLibs.pex"
+
+[[files]]
+src = "stage/scripts/zadLibsNG.pex"
+dest = "scripts/zadLibsNG.pex"
+
+[[files]]
+src = "stage/scripts/zadMufflingEffect.pex"
+dest = "scripts/zadMufflingEffect.pex"
+
+[[files]]
+src = "stage/scripts/zadMufflingStateScript.pex"
+dest = "scripts/zadMufflingStateScript.pex"
+
+[[files]]
+src = "stage/scripts/zadNPCGagUpdater.pex"
+dest = "scripts/zadNPCGagUpdater.pex"
+
+[[files]]
+src = "stage/scripts/zadNPCQuestScript.pex"
+dest = "scripts/zadNPCQuestScript.pex"
+
+[[files]]
+src = "stage/scripts/zadNativeFunctions.pex"
+dest = "scripts/zadNativeFunctions.pex"
+
+[[files]]
+src = "stage/scripts/zadPlayerScript.pex"
+dest = "scripts/zadPlayerScript.pex"
+
+[[files]]
+src = "stage/scripts/zadPlugScript.pex"
+dest = "scripts/zadPlugScript.pex"
+
+[[files]]
+src = "stage/scripts/zadSLBoundAnims.pex"
+dest = "scripts/zadSLBoundAnims.pex"
+
+[[files]]
+src = "stage/scripts/zadTrainingEffect.pex"
+dest = "scripts/zadTrainingEffect.pex"
+
+[[files]]
+src = "stage/scripts/zadWidgets.pex"
+dest = "scripts/zadWidgets.pex"
+
+[[files]]
+src = "stage/scripts/zadYokeQuestScript.pex"
+dest = "scripts/zadYokeQuestScript.pex"
+
+[[files]]
+src = "stage/scripts/zad_EffInflatablePlugsAnalScript.pex"
+dest = "scripts/zad_EffInflatablePlugsAnalScript.pex"
+
+[[files]]
+src = "stage/scripts/zad_EffInflateableVaginalPlugScript.pex"
+dest = "scripts/zad_EffInflateableVaginalPlugScript.pex"
+
+[[files]]
+src = "stage/scripts/zadcAnims.pex"
+dest = "scripts/zadcAnims.pex"
+
+[[files]]
+src = "stage/scripts/zadcFurnitureScript.pex"
+dest = "scripts/zadcFurnitureScript.pex"
+
+[[files]]
+src = "stage/scripts/zadcNGEscapeMinigame.pex"
+dest = "scripts/zadcNGEscapeMinigame.pex"
+
+[[files]]
+src = "stage/scripts/zadclibs.pex"
+dest = "scripts/zadclibs.pex"
+
+[[files]]
+src = "stage/scripts/zadexpressionlibs.pex"
+dest = "scripts/zadexpressionlibs.pex"
+
+[[files]]
+src = "stage/scripts/zadxUpdater.pex"
+dest = "scripts/zadxUpdater.pex"
+
+[[files]]
+src = "stage/scripts/zadx_BondageMittensEffectScript.pex"
+dest = "scripts/zadx_BondageMittensEffectScript.pex"
+
+[[files]]
+src = "stage/scripts/zadx_BondageMittensScript.pex"
+dest = "scripts/zadx_BondageMittensScript.pex"
+
+[[files]]
+src = "stage/scripts/zadx_ForcedWalkScript.pex"
+dest = "scripts/zadx_ForcedWalkScript.pex"
+
+[[files]]
+src = "stage/scripts/zadx_GagInflatableScript.pex"
+dest = "scripts/zadx_GagInflatableScript.pex"
+
+[[files]]
+src = "stage/scripts/zadx_HobbleSkirtEffectScript.pex"
+dest = "scripts/zadx_HobbleSkirtEffectScript.pex"

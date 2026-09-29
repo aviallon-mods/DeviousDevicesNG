@@ -1,0 +1,166 @@
+name: fomod-release
+
+# FOMOD packaging + release layer on top of the existing "Build and Release"
+# workflow: nothing is rebuilt here - the job packages the artifacts THAT run
+# produced (build-skse's DDNG-DLL and build-papyrus's DDNG-PEX, landed under
+# artifacts/<name>/ by actions/download-artifact) plus this repo's tracked mod
+# files, verifies the result with the shipping gate, uploads it and attaches it
+# to the tag's release.
+#
+# Why this is not `uses: aviallon-mods/modforge/.github/workflows/build-fomod.yml`:
+# its packager tools/package_fomod.py refuses zip entries whose names contain
+# spaces (`hostile archive path`), and this mod's payload needs ten of them -
+# the masters are literally "Devious Devices - Assets.esm". The job below keeps
+# the shared pipeline's shape (stage -> explicit file list from
+# fomod-package.toml -> stamped meta.ini -> verify gate -> artifact -> tag
+# release) and assembles the zip with tools/package_fomod_local.py, a copy of
+# modforge's packager whose path gate accepts spaces. THE SHIPPING GATE IS
+# modforge's tools/verify_fomod.py, unchanged, checked out at _modforge/ and
+# run below. When modforge's packager accepts spaces, replace this job with
+# `uses: aviallon-mods/modforge/.github/workflows/build-fomod.yml@main` and
+# `download_run_id: ${{ needs.guard.outputs.run_id }}` - fomod-package.toml is
+# already compatible.
+#
+# Triggers:
+#   * workflow_run: every completed "Build and Release" run (branch pushes,
+#     the nightly schedule and the port-branch dispatch builds alike) is
+#     packaged against the tree of this file's branch. dist/ and the records
+#     the payload takes from the tree are identical on main and
+#     port/commonlibsse-ng-v8, so packaging a port build against main's tree
+#     carries no drift; if they ever diverge, the staging script's coverage
+#     assertion turns the run red.
+#   * push of ci-* / nightly-* tags (the tags "Build and Release" creates for
+#     its releases): the verified zip is attached to that release.
+#   * workflow_dispatch with a run id: repackage any past build (dispatch on a
+#     tag ref to attach to that tag's release).
+
+on:
+  workflow_run:
+    workflows: ["Build and Release"]
+    types: [completed]
+  push:
+    tags: ["ci-*", "nightly-*"]
+  workflow_dispatch:
+    inputs:
+      download_run_id:
+        description: "Build run id whose artifacts to package (default: the build run of this commit)"
+        required: false
+        type: string
+
+jobs:
+  guard:
+    name: resolve + wait for the build run
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      run_id: ${{ steps.resolve.outputs.run_id }}
+    steps:
+      - name: Resolve the build run, wait for it, check its artifacts
+        id: resolve
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_RUN_ID: ${{ inputs.download_run_id }}
+        run: |
+          set -euo pipefail
+          # Packaging reads the payload from the default branch's tree (the
+          # checkout of the package job), so a pull_request build - whose code
+          # is NOT that tree - must not be packaged.
+          if [ "$GITHUB_EVENT_NAME" = "workflow_run" ] && [ "${{ github.event.workflow_run.event }}" = "pull_request" ]; then
+            echo "not packaging a pull_request build"; exit 0
+          fi
+
+          if [ -n "${INPUT_RUN_ID:-}" ]; then
+            run_id="$INPUT_RUN_ID"
+          elif [ "$GITHUB_EVENT_NAME" = "workflow_run" ]; then
+            run_id="${{ github.event.workflow_run.id }}"
+          else
+            run_id=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow "Build and Release" \
+                       --commit "$GITHUB_SHA" --json databaseId --jq '.[0].databaseId // empty')
+            if [ -z "$run_id" ]; then
+              if [ "$GITHUB_EVENT_NAME" = "push" ]; then
+                echo "::error::no 'Build and Release' run for $GITHUB_SHA - a release must not silently miss its FOMOD zip"
+                exit 1
+              fi
+              echo "no build run for $GITHUB_SHA - nothing to package"; exit 0
+            fi
+          fi
+
+          conclusion=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run_id" --jq '.conclusion // "running"')
+          if [ "$conclusion" != "success" ] && [ "$conclusion" != "running" ]; then
+            if [ "$GITHUB_EVENT_NAME" = "push" ]; then
+              echo "::error::build run $run_id concluded '$conclusion' - refusing to package a release from it"
+              exit 1
+            fi
+            echo "build run $run_id concluded '$conclusion' - nothing to package"; exit 0
+          fi
+
+          echo "waiting for build run $run_id"
+          gh run watch "$run_id" --repo "$GITHUB_REPOSITORY" --exit-status --interval 30 >/dev/null
+
+          names=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run_id/artifacts" --jq '.artifacts[].name')
+          echo "artifacts of run $run_id: ${names:-<none>}"
+          if [ -z "$names" ]; then
+            # "Build and Release"'s own change gate skips the builds on quiet
+            # nights; those runs have nothing to package. Not an error.
+            echo "build run $run_id produced no artifacts (its change gate skipped the build) - nothing to package"
+            exit 0
+          fi
+          for want in DDNG-DLL DDNG-PEX; do
+            grep -qx "$want" <<< "$names" || { echo "::error::build run $run_id has no '$want' artifact"; exit 1; }
+          done
+          echo "run_id=$run_id" >> "$GITHUB_OUTPUT"
+
+  package:
+    name: package + verify + release
+    needs: guard
+    if: needs.guard.outputs.run_id != ''
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkout modforge tooling (the shipping gate)
+        uses: actions/checkout@v4
+        with:
+          repository: aviallon-mods/modforge
+          path: _modforge
+
+      - name: Download the build run's artifacts
+        uses: actions/download-artifact@v4
+        with:
+          run-id: ${{ needs.guard.outputs.run_id }}
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: artifacts
+
+      - name: Stage the payload
+        shell: bash
+        run: tools/fomod-stage.sh
+
+      - name: Package the FOMOD zip
+        shell: bash
+        run: python3 tools/package_fomod_local.py --spec fomod-package.toml --out dist
+
+      - name: Verify the FOMOD package (modforge shipping gate)
+        shell: bash
+        run: python3 _modforge/tools/verify_fomod.py --spec fomod-package.toml dist/*.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DeviousDevicesNG-FOMOD
+          path: dist/*.zip
+          if-no-files-found: error
+
+      # Attach only ADDS the new zip to the release the build run created for
+      # the tag; nothing existing is rewritten or deleted.
+      - name: Attach the FOMOD zip to the tag's release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.zip

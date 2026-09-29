@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://qconsulting.ca/fo3/ModConfig5.0.xsd">
+  <moduleName>Devious Devices NG</moduleName>
+  <moduleImage path=""/>
+  <installSteps order="Explicit">
+    <installStep name="Install">
+      <optionalFileGroups>
+        <group name="Options" type="SelectAny">
+          <plugins>
+            <plugin name="Devious Devices NG">
+              <description>NG implementation of DD's plugin: the SKSE plugin (SKSE/Plugins/DeviousDevices.dll), the Papyrus scripts and the Devious Devices records, packaged standalone.</description>
+              <image path=""/>
+              <typeDescriptor><type name="Recommended"/></typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+      </optionalFileGroups>
+      <patterns>
+        <pattern name="all files">
+          <sourceFiles>
+            <source name="Devious Devices - Assets.esm"/>
+            <source name="Devious Devices - Contraptions.esm"/>
+            <source name="Devious Devices - Expansion.esm"/>
+            <source name="Devious Devices - Integration.esm"/>
+            <source name="Devious Devices SE patch.esp"/>
+            <source name="Devious Devices_KID.ini"/>
+            <source name="Seq"/>
+            <source name="SKSE"/>
+            <source name="scripts"/>
+          </sourceFiles>
+          <destination><destination path=""/></destination>
+        </pattern>
+      </patterns>
+    </installStep>
+  </installSteps>
+</config>
