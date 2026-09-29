@@ -7,19 +7,11 @@ name: fomod-release
 # files, verifies the result with the shipping gate, uploads it and attaches it
 # to the tag's release.
 #
-# Why this is not `uses: aviallon-mods/modforge/.github/workflows/build-fomod.yml`:
-# its packager tools/package_fomod.py refuses zip entries whose names contain
-# spaces (`hostile archive path`), and this mod's payload needs ten of them -
-# the masters are literally "Devious Devices - Assets.esm". The job below keeps
-# the shared pipeline's shape (stage -> explicit file list from
-# fomod-package.toml -> stamped meta.ini -> verify gate -> artifact -> tag
-# release) and assembles the zip with tools/package_fomod_local.py, a copy of
-# modforge's packager whose path gate accepts spaces. THE SHIPPING GATE IS
-# modforge's tools/verify_fomod.py, unchanged, checked out at _modforge/ and
-# run below. When modforge's packager accepts spaces, replace this job with
-# `uses: aviallon-mods/modforge/.github/workflows/build-fomod.yml@main` and
-# `download_run_id: ${{ needs.guard.outputs.run_id }}` - fomod-package.toml is
-# already compatible.
+# The packaging job below hands the staged payload to modforge's shared
+# packager (checked out at _modforge/) and gates with modforge's
+# tools/verify_fomod.py, unchanged. (An earlier local copy of the packager with
+# a widened path gate existed because modforge rejected entry names with
+# spaces; modforge now accepts them, so the copy is gone.)
 #
 # Triggers:
 #   * workflow_run: every completed "Build and Release" run (branch pushes,
@@ -145,7 +137,7 @@ jobs:
 
       - name: Package the FOMOD zip
         shell: bash
-        run: python3 tools/package_fomod_local.py --spec fomod-package.toml --out dist
+        run: python3 _modforge/tools/package_fomod.py --spec fomod-package.toml --out dist
 
       - name: Verify the FOMOD package (modforge shipping gate)
         shell: bash
